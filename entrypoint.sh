@@ -88,7 +88,8 @@ find "${GLOBAL_CFG_FOLDER}" -type f -name "system.ini" -print0 | while read -r -
         python3 -u src/main.py \
             --config "${GLOBAL_ROOT_FOLDER}/config.ini" \
             --system_override "$config_file" \
-            --outdir "$target_dir"
+            --outdir "$target_dir" \
+            --verbose
     else
         # Standard execution using the calculated monthly window
         python3 -u src/main.py \
@@ -96,7 +97,8 @@ find "${GLOBAL_CFG_FOLDER}" -type f -name "system.ini" -print0 | while read -r -
             --system_override "$config_file" \
             --outdir "$target_dir" \
             --start "$start_date" \
-            --end "$end_date"
+            --end "$end_date" \
+            --verbose
     fi
 
     echo "================================================="
