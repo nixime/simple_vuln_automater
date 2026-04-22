@@ -7,6 +7,8 @@ set -eu  # -e: exit on error, -u: treat unset variables as an error
 # --- Argument Parsing ---
 # Initialize the full scan toggle (default to false)
 FULL_SCAN=false
+ROOT_FOLDER=""
+APP_FOLDER=""
 
 # Loop through all command line arguments (e.g., ./entrypoint.sh --fullscan)
 while [[ $# -gt 0 ]]; do
@@ -15,6 +17,17 @@ while [[ $# -gt 0 ]]; do
       FULL_SCAN=true
       shift # Move to the next argument
       ;;
+
+    --config_root)
+      ROOT_FOLDER=$2
+      shift 2
+      ;;
+
+    --app_folder)
+      APP_FOLDER=$2
+      shift 2
+      ;;
+
     *)
       # Ignore unknown arguments or handle them here
       shift
@@ -23,7 +36,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # --- Path Definitions ---
-GLOBAL_ROOT_FOLDER=/opt/scanner
+GLOBAL_ROOT_FOLDER=${ROOT_FOLDER:-/opt/scanner}
 GLOBAL_CFG_FOLDER=${GLOBAL_ROOT_FOLDER}/configs   # Source for system.ini files
 GLOBAL_GEN_FOLDER=${GLOBAL_ROOT_FOLDER}/generated # Destination for new scan outputs
 GLOBAL_REV_FOLDER=${GLOBAL_ROOT_FOLDER}/reviewed  # Source for historical/reviewed reports
@@ -44,7 +57,7 @@ echo "Targeting Folders: Current ($current_folder) | Prior ($prior_folder)"
 echo "Full Scan Mode: $FULL_SCAN"
 
 # Change directory to the application root to ensure relative python imports work
-cd /app/simple_vuln_scanner
+cd ${APP_FOLDER:-/app/simple_vuln_scanner}
 
 # --- Processing Loop ---
 # Locate every 'system.ini' file within the config folder recursively.

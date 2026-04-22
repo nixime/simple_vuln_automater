@@ -18,6 +18,7 @@ Run the following command to link your local directories and start the scan. By 
 
 ```bash
 podman run --rm \
+  -e ROOT_FOLDER=/opt/scanner \
   -v (localpath)/generated:/opt/scanner/generated \
   -v (localpath)/reviewed:/opt/scanner/reviewed \
   -v (localpath)/configs:/opt/scanner/configs \
@@ -29,6 +30,7 @@ To run the scanner without date constraints, pass the `--fullscan` flag at the e
 
 ```bash
 podman run --rm \
+  -e ROOT_FOLDER=/opt/scanner \
   -v (localpath)/generated:/opt/scanner/generated \
   -v (localpath)/reviewed:/opt/scanner/reviewed \
   -v (localpath)/configs:/opt/scanner/configs \
