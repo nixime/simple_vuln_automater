@@ -41,15 +41,24 @@ GLOBAL_CFG_FOLDER=${GLOBAL_ROOT_FOLDER}/configs   # Source for system.ini files
 GLOBAL_GEN_FOLDER=${GLOBAL_ROOT_FOLDER}/generated # Destination for new scan outputs
 GLOBAL_REV_FOLDER=${GLOBAL_ROOT_FOLDER}/reviewed  # Source for historical/reviewed reports
 
-# --- Dynamic Date Calculation ---
-# Sets end_date to the 1st of the current month (Format: YYYY-MM-DD)
-end_date=$(date +%Y-%m-01)
-# Sets start_date to exactly one month prior (Format: YYYY-MM-DD)
-start_date=$(date -d "$end_date -1 month" +%Y-%m-01)
-
-# Extract YYYY_MM strings for folder organization
-current_folder=$(date -d "$end_date" +%Y_%m)
-prior_folder=$(date -d "$start_date" +%Y_%m)
+# --- Dynamic Cross-Platform Date Calculation ---
+# Detect OS and use the appropriate native 'date' syntax
+if date --version >/dev/null 2>&1; then
+    # --- Linux / GNU date ---
+    end_date=$(date +%Y-%m-01)
+    start_date=$(date -d "$end_date -1 month" +%Y-%m-01)
+    
+    current_folder=$(date -d "$end_date" +%Y_%m)
+    prior_folder=$(date -d "$start_date" +%Y_%m)
+else
+    # --- macOS / BSD date ---
+    # In BSD date, we first set the day to 01, then adjust the month
+    end_date=$(date -v1d +%Y-%m-%d)
+    start_date=$(date -j -f "%Y-%m-%d" "$end_date" -v-1m +%Y-%m-%d)
+    
+    current_folder=$(date -j -f "%Y-%m-%d" "$end_date" +%Y_%m)
+    prior_folder=$(date -j -f "%Y-%m-%d" "$start_date" +%Y_%m)
+fi
 
 # Console feedback for logging purposes
 echo "Interval: $start_date to $end_date"
