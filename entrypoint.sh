@@ -52,10 +52,14 @@ if date --version >/dev/null 2>&1; then
     prior_folder=$(date -d "$start_date" +%Y_%m)
 else
     # --- macOS / BSD date ---
-    # In BSD date, we first set the day to 01, then adjust the month
+    # 1. Get the first day of the current month safely
     end_date=$(date -v1d +%Y-%m-%d)
-    start_date=$(date -j -f "%Y-%m-%d" "$end_date" -v-1m +%Y-%m-%d)
     
+    # 2. To safely get last month's 1st day, we force the day to 1st (-v1d) 
+    #    BEFORE shifting the month back (-v-1m) to avoid end-of-month overflows.
+    start_date=$(date -v1d -v-1m +%Y-%m-%d)
+    
+    # 3. Format the folder names using the safely calculated dates
     current_folder=$(date -j -f "%Y-%m-%d" "$end_date" +%Y_%m)
     prior_folder=$(date -j -f "%Y-%m-%d" "$start_date" +%Y_%m)
 fi
